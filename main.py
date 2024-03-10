@@ -1,85 +1,129 @@
+# main.py
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 from google_tasks_client import GoogleTasksClient
 from obsidian_client import ObsidianClient
+
+import time
 from datetime import datetime, timedelta
 
-def update_obsidian_daily_note_with_current_google_tasks():
-    gtask = GoogleTasksClient()
-    obsidian = ObsidianClient()
-
-    markdown_tasks = gtask.get_current_tasks_as_markdown().split('\n')
-
-    # Get the path to today's daily note
-    daily_note_path = obsidian.get_note_path(date=datetime.now())
-
-    # Read the current content of the daily note
-    with open(daily_note_path, "r", encoding='utf-8') as file:
-        daily_note_content = file.readlines()
-
-    if "# Tasks\n" in daily_note_content:
-        # Find the position to insert new tasks
-        tasks_index = daily_note_content.index("# Tasks\n") + 1
-
-        # Check each task for uniqueness and add it if it's not already in the note
-        for task in markdown_tasks:
-            if task and task + '\n' not in daily_note_content[tasks_index:]:
-                daily_note_content.insert(tasks_index, task + '\n')
-                tasks_index += 1
-
-        # Write the updated content back to the daily note
-        with open(daily_note_path, "w", encoding='utf-8') as file:
-            file.writelines(daily_note_content)
-
-def find_completed_obsidian_tasks(daily_note_path):
-    """
-    Parses the Obsidian daily note to find completed tasks.
-
-    Args:
-        daily_note_path (str): Path to the daily note file.
-
-    Returns:
-        list of str: A list of completed task names.
-    """
-    completed_tasks = []
-    with open(daily_note_path, "r", encoding='utf-8') as file:
-        for line in file:
-            # Check if the line contains a completed task (markdown checkbox checked)
-            if line.strip().startswith("- [x] "):
-                # Extract the task name, removing the markdown checkbox and any trailing relative date
-                task_name = line.strip()[6:].split("(")[0].strip()
-                completed_tasks.append(task_name)
-    return completed_tasks
-
-def update_google_task(task_name, gtask):
-    """
-    Updates the status of a task in Google Tasks to completed based on the task name.
-
-    Args:
-        task_name (str): Name of the task to be updated.
-        gtask (GoogleTasksClient): An instance of GoogleTasksClient.
-    """
-    updated_task = gtask.find_and_complete_task(task_name)
-
-def find_obsidian_completed_yesterday_tasks_and_update_google_tasks_to_completed_status(date=datetime.now()):
-    gtask = GoogleTasksClient()
-    obsidian = ObsidianClient()
-
-    # Get the path to today's daily note
-    daily_note_path = obsidian.get_note_path(date)
 
 
-    # Find completed tasks in the Obsidian daily note
-    completed_tasks = find_completed_obsidian_tasks(daily_note_path)
+
+class DailyNoteHandler(FileSystemEventHandler):
+    def __init__(self, on_created_callbacks=None, on_modified_callbacks=None, on_deleted_callbacks=None) -> None:
+        super().__init__()
+        self.obsidian_client = ObsidianClient()
+        self.google_tasks_client = GoogleTasksClient()
+        self.obsidian_dir = self.__get_obsidian_dir()
+        self.run_interval = 1  # Interval in seconds to run the script
+        self.debounce_delay = 0.5  # Delay in seconds
+        self.last_modified = None
+
+        # Callbacks should be lists of functions
+        self.on_created_callbacks = on_created_callbacks if on_created_callbacks else []
+        self.on_modified_callbacks = on_modified_callbacks if on_modified_callbacks else []
+        self.on_deleted_callbacks = on_deleted_callbacks if on_deleted_callbacks else []
+
+    def __get_obsidian_dir(self):
+        return self.obsidian_client.obsidian_dir
     
+    def _execute_callbacks(self, callbacks, event):
+        for callback in callbacks:
+            callback(event)
 
-    # Update the status of completed tasks in Google Tasks
-    for task_name in completed_tasks:
-        update_google_task(task_name, gtask)
-        
-        
-def prepare_for_day():
-    find_obsidian_completed_yesterday_tasks_and_update_google_tasks_to_completed_status()
-    update_obsidian_daily_note_with_current_google_tasks()
-    
-    
+    def on_created(self, event):
+        if not event.is_directory and self._is_target_file(event.src_path):
+            self._execute_callbacks(self.on_created_callbacks, event)
+
+    def on_modified(self, event):
+        if not event.is_directory and self._is_target_file(event.src_path):
+            current_time = time.time()
+            if not self.last_modified or (current_time - self.last_modified > self.debounce_delay):
+                self._execute_callbacks(self.on_modified_callbacks, event)
+                self.last_modified = current_time
+
+    def on_deleted(self, event):
+        if not event.is_directory and self._is_target_file(event.src_path):
+            self._execute_callbacks(self.on_deleted_callbacks, event)
+
+    def _is_target_file(self, path):
+        if self.file_extension:
+            return path.endswith(self.file_extension)
+        return True
+
+    def start_observing(self, path=None, file_extension=None):
+        self.file_extension = file_extension
+        observing_path = f"{self.obsidian_dir}\\{path}" if path else self.obsidian_dir
+        observer = Observer()
+        observer.schedule(self, observing_path, recursive=True)
+        observer.start()
+        try:
+            while True:
+                time.sleep(self.run_interval)
+        except KeyboardInterrupt:
+            observer.stop()
+        observer.join()
+
+
+
+
 if __name__ == "__main__":
-    prepare_for_day()
+    
+    obsidian_client = ObsidianClient()
+    google_tasks_client = GoogleTasksClient()
+    day=datetime.now() 
+    tag="# Day planner"
+    
+    def on_create(event):
+        print(f"File created: {event.src_path}")
+        
+        # fill today's new daily note with current google tasks
+        gtask= GoogleTasksClient()
+        obsidian = ObsidianClient()
+
+        markdown_tasks = gtask.get_current_tasks_as_markdown().split('\n')
+        daily_note_path = obsidian.get_note_path_by_datetime(date=day)
+
+        with open(daily_note_path, "r", encoding='utf-8') as file:
+            daily_note_content = file.readlines()
+
+        if f"{tag}\n" in daily_note_content:
+            tasks_index = daily_note_content.index(f"{tag}\n") + 1
+
+            for task in markdown_tasks:
+                if task and task + '\n' not in daily_note_content[tasks_index:]:
+                    daily_note_content.insert(tasks_index, task + '\n')
+                    tasks_index += 1
+
+            with open(daily_note_path, "w", encoding='utf-8') as file:
+                file.writelines(daily_note_content)
+    
+    def on_modifiy(event):
+        print(f"File modified at time : {datetime.now()}")
+        
+        # update google tasks from obsidian
+        obsidian_tasks = obsidian_client.get_tasks_from_daily_note()
+        google_tasks = google_tasks_client.list_tasks()
+        
+        if len(obsidian_tasks) > 0:
+            for obsidian_task in obsidian_tasks:
+                if obsidian_task[1] == 'completed':
+                    google_tasks_client.find_and_complete_task(obsidian_task[0])
+                    obsidian_client.remove_task_from_daily_note(obsidian_task[0])
+                if obsidian_task[1] == 'incomplete':
+                    if obsidian_task[0] not in [x['title'] for x in google_tasks]:
+                        google_tasks_client.add_task(obsidian_task[0])
+                        print(f"Task '{obsidian_task[0]}' added to Google Tasks.")
+               
+    def on_delete(event):
+        print(f"File deleted: {event.src_path}")
+    
+    daily_note_handler = DailyNoteHandler(
+        on_created_callbacks=[on_create], 
+        on_modified_callbacks=[on_modifiy], 
+        on_deleted_callbacks=[on_delete]
+    )
+    
+    daily_note_handler.start_observing(path='Daily Notes', file_extension='.md')
+    
