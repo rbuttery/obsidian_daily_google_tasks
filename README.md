@@ -1,2 +1,2 @@
-# obsidian_daily_google_tasks
- A rough script designed to add Google Tasks into Obsidian's Daily Notes.
+1. need to add .env with your obsidian vault, or edit the part that uses environment variables, just add your vault path instead.
+2. run main.py
