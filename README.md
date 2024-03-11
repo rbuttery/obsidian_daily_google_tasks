@@ -7,7 +7,7 @@
 
 
 ### Installation
-1. Clone this repo
+1. Clone this repo (requires git is installed)
     ``` powershell
     git clone https://github.com/rbuttery/obsidian_daily_google_tasks.git
    ```
@@ -21,6 +21,7 @@
     - you can also just click on this file to run it!
 
 4. Run launch_obsidian_with_watchdog.bat
+   ⚠️ Requires that you have added your Google Cloud credentials.json file into the same directory. Follow the [Google Task Python Quickstart](https://developers.google.com/tasks/quickstart/python) from Google to get started.
    ``` powershell
    ./launch_obsidian_with_watchdog.bat
    ```
