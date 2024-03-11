@@ -1,7 +1,7 @@
 @echo off
 
 REM Set the path to the project
-set "PROJECT_PATH=C:\Projects\obsidian_launcher"
+set "PROJECT_PATH=%~dp0"
 
 REM Set the full path to the virtual environment
 set "VENV_PATH=%PROJECT_PATH%\env"
