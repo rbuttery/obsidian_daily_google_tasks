@@ -23,7 +23,7 @@
 4. Update the ".env" file with the proper paths. You'll need to specify where your Obsidian Vault is located.
 
 5. Run launch_obsidian_with_watchdog.bat
-   ⚠️ Requires that you have added your Google Cloud credentials.json file into the same directory. Follow the [Google Task Python Quickstart](https://developers.google.com/tasks/quickstart/python) from Google to get started. Sepcifically, the part on [Authentication](https://developers.google.com/tasks/quickstart/python#authorize_credentials_for_a_desktop_application)
+   ⚠️ Requires that you have added your Google Cloud credentials.json file into the same directory. Follow the [Google Task Python Quickstart](https://developers.google.com/tasks/quickstart/python) from Google to get started. Specifically, the part on [Authentication](https://developers.google.com/tasks/quickstart/python#authorize_credentials_for_a_desktop_application)
    ``` powershell
    launch_obsidian_with_watchdog.bat
    ```
