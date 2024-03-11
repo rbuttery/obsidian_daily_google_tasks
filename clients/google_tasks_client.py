@@ -160,7 +160,7 @@ class GoogleTasksClient:
 
         try:
             new_task = self.service.tasks().insert(tasklist=tasklist, body=task_body).execute()
-            print(f"New task '{task_name}' created with a 24-hour due date.")
+            # print(f"New task '{task_name}' created with a 24-hour due date.")
             return new_task
         except Exception as e:
             print(f"An error occurred while creating the task: {e}")

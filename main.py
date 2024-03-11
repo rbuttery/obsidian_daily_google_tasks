@@ -1,11 +1,17 @@
 # main.py
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-from google_tasks_client import GoogleTasksClient
-from obsidian_client import ObsidianClient
+from clients.google_tasks_client import GoogleTasksClient
+from clients.obsidian_client import ObsidianClient
 
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
+
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 
@@ -70,10 +76,13 @@ class DailyNoteHandler(FileSystemEventHandler):
 
 if __name__ == "__main__":
     
+    print("Daily Note Handler is running...")
+    
     obsidian_client = ObsidianClient()
     google_tasks_client = GoogleTasksClient()
     day=datetime.now() 
-    tag="# Day planner"
+    tag=os.getenv("DAILY_NOTE_TAG")  # Get tag from environment variable
+    daily_notes_path=os.getenv("DAILY_NOTES_PATH")  # Get daily notes path from environment variable
     
     def on_create(event):
         print(f"File created: {event.src_path}")
@@ -83,7 +92,7 @@ if __name__ == "__main__":
         obsidian = ObsidianClient()
 
         markdown_tasks = gtask.get_current_tasks_as_markdown().split('\n')
-        daily_note_path = obsidian.get_note_path_by_datetime(date=day)
+        daily_note_path = obsidian.get_note_path_by_datetime(date=day, path=daily_notes_path)
 
         with open(daily_note_path, "r", encoding='utf-8') as file:
             daily_note_content = file.readlines()
@@ -100,7 +109,7 @@ if __name__ == "__main__":
                 file.writelines(daily_note_content)
     
     def on_modifiy(event):
-        print(f"File modified at time : {datetime.now()}")
+        # print(f"File modified at time : {datetime.now()}")
         
         # update google tasks from obsidian
         obsidian_tasks = obsidian_client.get_tasks_from_daily_note()
@@ -125,5 +134,5 @@ if __name__ == "__main__":
         on_deleted_callbacks=[on_delete]
     )
     
-    daily_note_handler.start_observing(path='Daily Notes', file_extension='.md')
+    daily_note_handler.start_observing(path=daily_notes_path, file_extension='.md')
     
