@@ -20,8 +20,13 @@
     ```
     - you can also just click on this file to run it!
 
+4. Run launch_obsidian_with_watchdog.bat
+   ``` powershell
+   ./launch_obsidian_with_watchdog.bat
+   ```
+
 #### Optional but recommended: **Pin to your taskbar**
-4.  Create a shortcut on your desktop.
+5.  Create a shortcut on your desktop.
 
     - Right click & create a new "shortcut" on your desktop. 
 
