@@ -16,14 +16,14 @@
 
 3. Run setup.bat
     ``` powershell
-    ./setup.bat
+    setup.bat
     ```
     - you can also just click on this file to run it!
 
 4. Run launch_obsidian_with_watchdog.bat
    ⚠️ Requires that you have added your Google Cloud credentials.json file into the same directory. Follow the [Google Task Python Quickstart](https://developers.google.com/tasks/quickstart/python) from Google to get started.
    ``` powershell
-   ./launch_obsidian_with_watchdog.bat
+   launch_obsidian_with_watchdog.bat
    ```
 
 ### Optional but recommended: **Pin to your taskbar**
