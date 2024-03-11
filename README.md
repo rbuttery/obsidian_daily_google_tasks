@@ -2,8 +2,8 @@
 
 ### How It Works
 1. Python uses the [watchdog](https://pypi.org/project/watchdog/) library to observe changes in your Obsidian Vault.
-2. [clients\google_tasks_client.py](clients\google_tasks_client.py) is a basic Google Tasks client. For this to work, you must first obtain a credentials.json service account file from Google Cloud Console - this is free, but is not straight forward for anyone not familiar. Reach out if you need help setting this up! 
-3. [clients\obsidian_client.py](clients\obsidian_client.py) needs your "OBSIDIAN_VAULT" environment variable. To set this up, navigate to [.env](.env) and input the folder in which your Obsidian Valut is located.
+2. [clients\google_tasks_client.py](https://github.com/rbuttery/obsidian_daily_google_tasks/blob/main/clients/google_tasks_client.py) is a basic Google Tasks client. For this to work, you must first obtain a credentials.json service account file from Google Cloud Console - this is free, but is not straight forward for anyone not familiar. Reach out if you need help setting this up! 
+3. [clients\obsidian_client.py](https://github.com/rbuttery/obsidian_daily_google_tasks/blob/main/clients/obsidian_client.py) needs your "OBSIDIAN_VAULT" environment variable. To set this up, navigate to [.env](.env) and input the folder in which your Obsidian Valut is located.
 
 
 #### Installation
