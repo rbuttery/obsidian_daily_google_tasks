@@ -19,15 +19,17 @@
     setup.bat
     ```
     - you can also just click on this file to run it!
+  
+4. Update the ".env" file with the proper paths. You'll need to specify where your Obsidian Vault is located.
 
-4. Run launch_obsidian_with_watchdog.bat
+5. Run launch_obsidian_with_watchdog.bat
    ⚠️ Requires that you have added your Google Cloud credentials.json file into the same directory. Follow the [Google Task Python Quickstart](https://developers.google.com/tasks/quickstart/python) from Google to get started. Sepcifically, the part on [Authentication](https://developers.google.com/tasks/quickstart/python#authorize_credentials_for_a_desktop_application)
    ``` powershell
    launch_obsidian_with_watchdog.bat
    ```
 
 ### Optional but recommended: **Pin to your taskbar**
-5.  Create a shortcut on your desktop.
+6.  Create a shortcut on your desktop.
 
     - Right click & create a new "shortcut" on your desktop. 
 
