@@ -6,7 +6,7 @@
 3. [clients\obsidian_client.py](https://github.com/rbuttery/obsidian_daily_google_tasks/blob/main/clients/obsidian_client.py) needs your "OBSIDIAN_VAULT" environment variable. To set this up, navigate to [.env](https://github.com/rbuttery/obsidian_daily_google_tasks/blob/main/clients/.env) and input the folder in which your Obsidian Valut is located.
 
 
-#### Installation
+### Installation
 1. Clone this repo
     ``` powershell
     git clone https://github.com/rbuttery/obsidian_daily_google_tasks.git
@@ -25,7 +25,7 @@
    ./launch_obsidian_with_watchdog.bat
    ```
 
-#### Optional but recommended: **Pin to your taskbar**
+### Optional but recommended: **Pin to your taskbar**
 5.  Create a shortcut on your desktop.
 
     - Right click & create a new "shortcut" on your desktop. 
