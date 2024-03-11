@@ -92,7 +92,7 @@ if __name__ == "__main__":
         obsidian = ObsidianClient()
 
         markdown_tasks = gtask.get_current_tasks_as_markdown().split('\n')
-        daily_note_path = obsidian.get_note_path_by_datetime(date=day, path=daily_notes_path)
+        daily_note_path = obsidian.get_note_path_by_datetime(date=day)
 
         with open(daily_note_path, "r", encoding='utf-8') as file:
             daily_note_content = file.readlines()
