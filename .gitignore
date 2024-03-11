@@ -1,0 +1,6 @@
+env
+
+credentials.*
+token.*
+desktop.ini
+clients/__*

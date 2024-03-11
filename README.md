@@ -14,8 +14,11 @@
 2. Have python installed, or install python.
     - https://www.python.org/downloads/windows/
 
-3. Run (double click) setup.bat
-    - Installs "requirements.txt" into an "env" folder inside this directory.
+3. Run setup.bat
+    ``` powershell
+    ./setup.bat
+    ```
+    - you can also just click on this file to run it!
 
 #### Optional but recommended: **Pin to your taskbar**
 4.  Create a shortcut on your desktop.
