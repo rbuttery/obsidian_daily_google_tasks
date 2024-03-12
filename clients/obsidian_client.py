@@ -43,24 +43,25 @@ class ObsidianClient:
         return daily_note_content
 
     def get_tasks_from_daily_note(self):
-        """
-        Parses today's daily note to extract tasks (only the text between "**") and their completion status.
+            """
+            Parses today's daily note to extract tasks (only the text between "**") and their completion status.
 
-        Returns:
-            list of tuples: A list where each tuple contains a task name (text between "**") and its status ('completed' or 'incomplete').
-        """
-        daily_note_content = self.get_today_daily_note()
-        task_pattern = re.compile(r'- \[(x| )\] \*\*(.+?)\*\*')
-        tasks = []
+            Returns:
+                list of tuples: A list where each tuple contains a task name (text between "**") and its status ('completed' or 'incomplete').
+            """
+            daily_note_content = self.get_today_daily_note()
+            # Updated regex to include an optional time period before the task name
+            task_pattern = re.compile(r'- \[(x| )\](?: (\d{2}:\d{2} - \d{2}:\d{2}))? \*\*(.+?)\*\*')
+            tasks = []
 
-        for line in daily_note_content.split('\n'):
-            match = task_pattern.match(line.strip())
-            if match:
-                status = 'completed' if match.group(1) == 'x' else 'incomplete'
-                task_name = match.group(2).strip()
-                tasks.append((task_name, status))
+            for line in daily_note_content.split('\n'):
+                match = task_pattern.match(line.strip())
+                if match:
+                    status = 'completed' if match.group(1) == 'x' else 'incomplete'
+                    task_name = match.group(3).strip()  # Group 3 is now the task name
+                    tasks.append((task_name, status))
 
-        return tasks
+            return tasks
     
     def remove_task_from_daily_note(self, task):
         """
